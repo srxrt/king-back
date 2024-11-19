@@ -1,0 +1,8 @@
+1 => always log the when a endpoint is visited --> user visited goHome
+2 => Error Handling: always use try/catch with async functions
+3 => log the request types using "morgan" package
+4 => Naming Standards:
+function, methods, variable names: camelCase
+classes: PascalCase
+folders: kebab-case
+css: snake_case
