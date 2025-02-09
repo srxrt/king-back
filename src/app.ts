@@ -63,7 +63,7 @@ const io = new SocketIOServer(server, {
 });
 
 let summaryClient = 0;
-io.on("connection", (socket) => {
+io.on("connection", (socket:any) => {
   summaryClient++;
   console.log(`connection && total ${summaryClient}`);
 
