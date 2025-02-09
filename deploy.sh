@@ -6,7 +6,7 @@ git checkout master
 git pull origin master
 
 npm i
-npm build
+npm run build
 pm2 start process.config.js --env production
 
 #DEVELOPMENT
