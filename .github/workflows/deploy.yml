@@ -8,7 +8,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -23,7 +25,6 @@ jobs:
       - name: Deploy to VPS
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-          source ~/.bashrc # or ~/.bash_profile, depending on the shell
           cd /home/kingkebab-project/king-back
-          sh ./deploy.sh
+          ./deploy.sh
           EOF

@@ -1,7 +1,6 @@
 #!/bin/bash
 
 git checkout develop
-# Stage all changes
 git add .
 
 # Prompt the user for the commit message
