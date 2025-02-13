@@ -2,6 +2,7 @@
 
 git checkout develop
 git add .
+git status
 
 # Prompt the user for the commit message
 echo "Enter commit message: "
