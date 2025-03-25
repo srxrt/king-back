@@ -27,11 +27,7 @@ router.post(
 router.get("/member/top-users", memberController.getTopUsers);
 
 /** Products */
-router.get(
-  "/product/all",
-  productController.checkCache,
-  productController.getProducts,
-);
+router.get("/product/all", productController.getProducts);
 router.get(
   "/product/:id",
   memberController.retrieveAuth,

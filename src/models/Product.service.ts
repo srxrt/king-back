@@ -1,5 +1,9 @@
 import { T } from "../libs/types/common";
-import { shapeIntoMongooseObjectId } from "../libs/config";
+import {
+  CACHE_TTL,
+  hashRedisKey,
+  shapeIntoMongooseObjectId,
+} from "../libs/config";
 import Errors, { HttpCode, Message } from "../libs/Errors";
 import {
   Product,
@@ -13,6 +17,8 @@ import mongoose from "mongoose";
 import { ViewInput } from "../libs/types/view";
 import { ViewGroup } from "../libs/enums/view.enum";
 import ViewService from "./View.service";
+import redis from "../redis";
+import { cacheData } from "../libs/utils/cache";
 
 class ProductService {
   private readonly productModel;
@@ -27,6 +33,7 @@ class ProductService {
    * SPA
    */
   public async getProducts(inquiry: ProductInquiry): Promise<Product[]> {
+    console.log(inquiry);
     const match: T = { productStatus: ProductStatus.PROCESS };
     if (inquiry.productCollection)
       match.productCollection = inquiry.productCollection;
@@ -48,6 +55,15 @@ class ProductService {
       .exec();
 
     if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+
+    const key = `products:${hashRedisKey(JSON.stringify(inquiry))}`;
+    cacheData(key, result)
+      .then(() => {
+        console.log("Cache created for products!");
+      })
+      .catch((err) => {
+        console.log("Error creating cache for product!", err);
+      });
 
     return result;
   }
@@ -86,6 +102,14 @@ class ProductService {
           .exec();
       }
     }
+    redis
+      .setex(`product:${id}`, CACHE_TTL, JSON.stringify(result))
+      .then(() => {
+        console.log("Cache created for product:", id);
+      })
+      .catch((err) => {
+        console.log("Error creating cache for product!", err);
+      });
     return result;
   }
 

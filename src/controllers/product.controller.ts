@@ -7,6 +7,7 @@ import { ProductInput, ProductInquiry } from "../libs/types/product";
 import { ProductCollection } from "../libs/enums/product.enum";
 import { hashRedisKey } from "../libs/config";
 import redis from "../redis";
+import { checkCache } from "../libs/utils/cache";
 
 const productService = new ProductService();
 const productController: T = {};
@@ -69,7 +70,6 @@ productController.getProducts = async (req: Request, res: Response) => {
   try {
     console.log("getProducts");
     const { order, page, limit, productCollection, search } = req.query;
-    console.log(req.query);
 
     const inquiry: ProductInquiry = {
       order: String(order),
@@ -80,9 +80,11 @@ productController.getProducts = async (req: Request, res: Response) => {
     if (productCollection)
       inquiry.productCollection = productCollection as ProductCollection;
     if (search) inquiry.search = String(search);
-
-    const data = await productService.getProducts(inquiry);
-
+    const key = `products:${hashRedisKey(JSON.stringify(inquiry))}`;
+    let data = await checkCache(key);
+    if (!data) {
+      data = await productService.getProducts(inquiry);
+    }
     res.status(HttpCode.OK).json(data);
   } catch (err) {
     console.log("ERROR:getAllProducts", err);
@@ -94,34 +96,22 @@ productController.getProducts = async (req: Request, res: Response) => {
 productController.getProduct = async (req: ExtendedRequest, res: Response) => {
   try {
     console.log("getProduct");
-
     const id = req.params.id;
     const memberId = req.member?._id ?? null;
-    const result = await productService.getProduct(memberId, id);
-
-    res.status(HttpCode.OK).json(result);
+    let data;
+    data = await checkCache(`product:${id}`);
+    if (data) {
+      if (memberId) {
+        productService.getProduct(memberId, id).then();
+      }
+    } else {
+      data = await productService.getProduct(memberId, id);
+    }
+    res.status(HttpCode.OK).json(data);
   } catch (err) {
     console.log("ERROR:getProduct", err);
     if (err instanceof Errors) res.status(err.code).json(err);
     else res.status(Errors.standard.code).json(Errors.standard);
-  }
-};
-
-productController.checkCache = async (
-  req: ExtendedRequest,
-  res: Response,
-  next: NextFunction,
-) => {
-  let key;
-  if (req.query) key = hashRedisKey(JSON.stringify(req.query));
-  else key = req.params.id;
-  const data = await redis.get(`product:${key}`);
-  if (data) {
-    console.log("Cache hit!");
-    res.status(HttpCode.OK).json(data);
-  } else {
-    console.log("Cache miss!");
-    next();
   }
 };
 
