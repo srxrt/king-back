@@ -22,13 +22,13 @@ const store = new MongoDBStore({
 });
 
 // entrance
+app.use(morgan(MORGAN_FORMAT));
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static("./uploads"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors({ credentials: true, origin: true }));
 app.use(cookieParser());
-app.use(morgan(MORGAN_FORMAT));
 
 // sessions
 app.use(
@@ -63,7 +63,7 @@ const io = new SocketIOServer(server, {
 });
 
 let summaryClient = 0;
-io.on("connection", (socket:any) => {
+io.on("connection", (socket: any) => {
   summaryClient++;
   console.log(`connection && total ${summaryClient}`);
 
