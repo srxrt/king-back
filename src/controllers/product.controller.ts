@@ -6,7 +6,6 @@ import { AdminRequest, ExtendedRequest } from "../libs/types/member";
 import { ProductInput, ProductInquiry } from "../libs/types/product";
 import { ProductCollection } from "../libs/enums/product.enum";
 import { hashRedisKey } from "../libs/config";
-import redis from "../redis";
 import { checkCache } from "../libs/utils/cache";
 
 const productService = new ProductService();
@@ -83,6 +82,7 @@ productController.getProducts = async (req: Request, res: Response) => {
     const key = `products:${hashRedisKey(JSON.stringify(inquiry))}`;
     let data = await checkCache(key);
     if (!data) {
+      console.log("FETCHING FROM DB!");
       data = await productService.getProducts(inquiry);
     }
     res.status(HttpCode.OK).json(data);
@@ -99,12 +99,15 @@ productController.getProduct = async (req: ExtendedRequest, res: Response) => {
     const id = req.params.id;
     const memberId = req.member?._id ?? null;
     let data;
-    data = await checkCache(`product:${id}`);
+    data = await checkCache(`product:${hashRedisKey(String(id))}`);
     if (data) {
       if (memberId) {
-        productService.getProduct(memberId, id).then();
+        // productService.getProduct(memberId, id).then(() => {
+        //   console.log("Updated product data");
+        // });
       }
     } else {
+      console.log("FETCHING FROM DB!");
       data = await productService.getProduct(memberId, id);
     }
     res.status(HttpCode.OK).json(data);

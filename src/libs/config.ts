@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import crypto from "crypto";
 
-export const CACHE_TTL = 3600;
+export const CACHE_TTL = 600;
 export const AUTH_TIMER = 24;
 export const MORGAN_FORMAT = ":method :url :response-time [:status] \n";
 

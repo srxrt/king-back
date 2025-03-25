@@ -1,6 +1,5 @@
 import redis from "../../redis";
 import { CACHE_TTL } from "../config";
-import { T } from "../types/common";
 import { Order } from "../types/order";
 import { Product } from "../types/product";
 

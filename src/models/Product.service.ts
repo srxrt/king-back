@@ -93,7 +93,7 @@ class ProductService {
           .exec();
       }
     }
-    const key = `product:${id}`;
+    const key = `product:${hashRedisKey(id)}`;
     cacheData(key, result)
       .then(() => {
         console.log("Cache created for product:", id);
