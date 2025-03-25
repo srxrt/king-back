@@ -9,26 +9,50 @@ router.get("/member/restaurant", memberController.getRestaurant);
 router.post("/member/login", memberController.login);
 router.post("/member/signup", memberController.signup);
 router.get(
-	"/member/detail",
-	memberController.verifyAuth,
-	memberController.getMemberDetail
+  "/member/detail",
+  memberController.verifyAuth,
+  memberController.getMemberDetail,
 );
-router.post("/member/logout", memberController.verifyAuth, memberController.logout);
 router.post(
-	"/member/update",
-	memberController.verifyAuth,
-	uploader("members").single("memberImage"),
-	memberController.updateMember
+  "/member/logout",
+  memberController.verifyAuth,
+  memberController.logout,
+);
+router.post(
+  "/member/update",
+  memberController.verifyAuth,
+  uploader("members").single("memberImage"),
+  memberController.updateMember,
 );
 router.get("/member/top-users", memberController.getTopUsers);
 
 /** Products */
-router.get("/product/all", productController.getProducts);
-router.get("/product/:id", memberController.retrieveAuth, productController.getProduct);
+router.get(
+  "/product/all",
+  productController.checkCache,
+  productController.getProducts,
+);
+router.get(
+  "/product/:id",
+  memberController.retrieveAuth,
+  productController.getProduct,
+);
 
 /** Orders */
-router.get("/order/all", memberController.verifyAuth, orderController.getMyOrders);
-router.post("/order/create", memberController.verifyAuth, orderController.createOrder);
-router.post("/order/update", memberController.verifyAuth, orderController.updateOrder);
+router.get(
+  "/order/all",
+  memberController.verifyAuth,
+  orderController.getMyOrders,
+);
+router.post(
+  "/order/create",
+  memberController.verifyAuth,
+  orderController.createOrder,
+);
+router.post(
+  "/order/update",
+  memberController.verifyAuth,
+  orderController.updateOrder,
+);
 
 export default router;
