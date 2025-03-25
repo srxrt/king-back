@@ -53,9 +53,7 @@ class ProductService {
         { $limit: inquiry.limit },
       ])
       .exec();
-
     if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
-
     const key = `products:${hashRedisKey(JSON.stringify(inquiry))}`;
     cacheData(key, result)
       .then(() => {
@@ -64,7 +62,6 @@ class ProductService {
       .catch((err) => {
         console.log("Error creating cache for product!", err);
       });
-
     return result;
   }
 
@@ -92,7 +89,6 @@ class ProductService {
       console.log("exists", !!existView);
       if (!existView) {
         await this.viewService.insertMemberView(input);
-
         result = await this.productModel
           .findByIdAndUpdate(
             productId,
@@ -102,8 +98,8 @@ class ProductService {
           .exec();
       }
     }
-    redis
-      .setex(`product:${id}`, CACHE_TTL, JSON.stringify(result))
+    const key = `product:${id}`;
+    cacheData(key, result)
       .then(() => {
         console.log("Cache created for product:", id);
       })
