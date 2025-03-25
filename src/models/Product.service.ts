@@ -18,7 +18,7 @@ import { ViewInput } from "../libs/types/view";
 import { ViewGroup } from "../libs/enums/view.enum";
 import ViewService from "./View.service";
 import redis from "../redis";
-import { cacheData } from "../libs/utils/cache";
+import { cacheData, deleteKeysByPattern } from "../libs/utils/cache";
 
 class ProductService {
   private readonly productModel;
@@ -121,6 +121,7 @@ class ProductService {
 
   public async createNewProduct(input: ProductInput): Promise<Product> {
     try {
+      deleteKeysByPattern("products:*").then();
       return await this.productModel.create(input);
     } catch (err) {
       console.error("ERROR:Model:getAllProducts", err);
@@ -138,6 +139,14 @@ class ProductService {
       .exec();
 
     if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
+    cacheData(`product:${id}`, result)
+      .then(() => {
+        console.log("Update cache for product:", id);
+      })
+      .catch((err) => {
+        console.log("Error updating cache for product!", err);
+      });
+
     return result;
   }
 }
