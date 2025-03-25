@@ -1,9 +1,5 @@
 import { T } from "../libs/types/common";
-import {
-  CACHE_TTL,
-  hashRedisKey,
-  shapeIntoMongooseObjectId,
-} from "../libs/config";
+import { hashRedisKey, shapeIntoMongooseObjectId } from "../libs/config";
 import Errors, { HttpCode, Message } from "../libs/Errors";
 import {
   Product,
@@ -17,7 +13,6 @@ import mongoose from "mongoose";
 import { ViewInput } from "../libs/types/view";
 import { ViewGroup } from "../libs/enums/view.enum";
 import ViewService from "./View.service";
-import redis from "../redis";
 import { cacheData, deleteKeysByPattern } from "../libs/utils/cache";
 
 class ProductService {
@@ -146,7 +141,6 @@ class ProductService {
       .catch((err) => {
         console.log("Error updating cache for product!", err);
       });
-
     return result;
   }
 }
