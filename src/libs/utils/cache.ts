@@ -1,5 +1,6 @@
 import redis from "../../redis";
 import { CACHE_TTL } from "../config";
+import { Member } from "../types/member";
 import { Order } from "../types/order";
 import { Product } from "../types/product";
 
@@ -16,7 +17,7 @@ export const checkCache = async (key: string) => {
 
 export const cacheData = async (
   key: string,
-  data: Product | Order | Product[] | Order[],
+  data: Product | Order | Member | Product[] | Order[],
 ) => {
   await redis.setex(key, CACHE_TTL, JSON.stringify(data));
 };

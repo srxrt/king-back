@@ -6,6 +6,7 @@ import { MemberInput } from "../libs/types/member";
 import Errors, { HttpCode, Message } from "../libs/Errors";
 import AuthService from "../models/Auth.service";
 import { AUTH_TIMER } from "../libs/config";
+import { checkCache } from "../libs/utils/cache";
 
 // REACT
 const memberController: T = {};
@@ -15,8 +16,10 @@ const authService = new AuthService();
 memberController.getRestaurant = async (req: Request, res: Response) => {
   try {
     console.log("getRestaurant");
-    const result = await memberService.getRestaurant();
-
+    let result = await checkCache("restaurant");
+    if (!result) {
+      result = await memberService.getRestaurant();
+    }
     res.status(HttpCode.OK).json(result);
   } catch (err) {
     console.log("ERROR:getRestaurant", err);
@@ -27,17 +30,14 @@ memberController.getRestaurant = async (req: Request, res: Response) => {
 memberController.signup = async (req: Request, res: Response) => {
   try {
     console.log("signup");
-
     console.log("REQ BODY", req.body);
     const input: MemberInput = req.body,
       result: Member = await memberService.signup(input);
-
     const token = await authService.createToken(result);
     res.cookie("accessToken", token, {
       maxAge: AUTH_TIMER * 3600 * 1000,
       httpOnly: false,
     });
-
     res.status(HttpCode.CREATED).json({ member: result, accessToken: token });
   } catch (err) {
     console.log("ERROR:signup", err);
@@ -51,14 +51,11 @@ memberController.login = async (req: Request, res: Response) => {
     console.log("login");
     const input: LoginInput = req.body,
       result = await memberService.login(input);
-
     const token = await authService.createToken(result);
-
     res.cookie("accessToken", token, {
       maxAge: AUTH_TIMER * 3600 * 1000,
       httpOnly: false,
     });
-
     res.status(HttpCode.OK).json({ member: result, accessToken: token });
   } catch (err) {
     console.log("ERROR:login", err);
