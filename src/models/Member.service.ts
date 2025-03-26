@@ -127,6 +127,7 @@ class MemberService {
     if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
     return result;
   }
+
   /**BSSR */
   public async processSignup(input: MemberInput): Promise<Member> {
     const exist = await this.memberModel

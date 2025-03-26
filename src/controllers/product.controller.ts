@@ -1,5 +1,5 @@
 import { T } from "../libs/types/common";
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import Errors, { HttpCode, Message } from "../libs/Errors";
 import ProductService from "../models/Product.service";
 import { AdminRequest, ExtendedRequest } from "../libs/types/member";

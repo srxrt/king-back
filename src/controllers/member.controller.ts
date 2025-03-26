@@ -27,6 +27,7 @@ memberController.getRestaurant = async (req: Request, res: Response) => {
     else res.status(Errors.standard.code).json(Errors.standard);
   }
 };
+
 memberController.signup = async (req: Request, res: Response) => {
   try {
     console.log("signup");
@@ -83,7 +84,6 @@ memberController.getMemberDetail = async (
   try {
     console.log("getMemberDetail");
     const result = await memberService.getMemberDetail(req.member);
-
     res.status(HttpCode.OK).json({ result });
   } catch (err) {
     console.log("ERROR:getMemberDetail", err);
@@ -98,7 +98,6 @@ memberController.updateMember = async (req: ExtendedRequest, res: Response) => {
     const input: MemberInput = req.body;
     if (req.file) input.memberImage = req.file.path.replace(/\\/g, "/");
     const result = await memberService.updateMember(req.member, input);
-
     res.status(HttpCode.OK).json(result);
   } catch (err) {
     console.log("ERROR:updateMember", err);
@@ -110,7 +109,6 @@ memberController.updateMember = async (req: ExtendedRequest, res: Response) => {
 memberController.getTopUsers = async (req: Request, res: Response) => {
   try {
     console.log("getTopUsers");
-
     const result = await memberService.getTopUsers();
     res.status(HttpCode.OK).json(result);
   } catch (err) {
@@ -152,4 +150,5 @@ memberController.retrieveAuth = async (
     next();
   }
 };
+
 export default memberController;

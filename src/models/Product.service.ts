@@ -39,7 +39,6 @@ class ProductService {
       inquiry.order === "productPrice"
         ? { [inquiry.order]: 1 }
         : { [inquiry.order]: -1 };
-
     const result = await this.productModel
       .aggregate([
         { $match: match },
@@ -65,21 +64,17 @@ class ProductService {
     id: string,
   ): Promise<Product> {
     const productId = shapeIntoMongooseObjectId(id);
-
     let result = await this.productModel
       .findOne({ _id: productId, productStatus: ProductStatus.PROCESS })
       .lean()
       .exec();
-
     if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
-
     if (memberId) {
       const input: ViewInput = {
         viewGroup: ViewGroup.PRODUCT,
         memberId: memberId,
         viewRefId: productId,
       };
-
       const existView = await this.viewService.checkViewExistence(input);
       console.log("exists", !!existView);
       if (!existView) {
@@ -132,7 +127,6 @@ class ProductService {
     const result = await this.productModel
       .findOneAndUpdate({ _id: id }, input, { new: true })
       .exec();
-
     if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
     cacheData(`product:${id}`, result)
       .then(() => {
