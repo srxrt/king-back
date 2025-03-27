@@ -1,19 +1,18 @@
 import express from "express";
+import http from "http";
 import path from "path";
-const app = express();
 import router from "./router";
 import routerAdmin from "./router-admin";
 import morgan from "morgan";
-import { MORGAN_FORMAT } from "./libs/config";
 import cors from "cors";
-
-import session from "express-session";
 import ConnectMongoDBSession from "connect-mongodb-session";
-import { T } from "./libs/types/common";
 import cookieParser from "cookie-parser";
+import { MORGAN_FORMAT } from "./libs/config";
+import { T } from "./libs/types/common";
 import { Server as SocketIOServer } from "socket.io";
-import http from "http";
 
+const app = express();
+import session from "express-session";
 const MongoDBStore = ConnectMongoDBSession(session);
 
 const store = new MongoDBStore({

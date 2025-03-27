@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 
 mongoose
   .connect(process.env.MONGO_URL as string, {})
-  .then((data) => {
+  .then(() => {
     console.log("MongoDB connection success");
     const PORT = process.env.PORT || 3003;
     app.listen(PORT, () => {

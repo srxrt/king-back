@@ -24,6 +24,7 @@ productController.getAllProducts = async (req: Request, res: Response) => {
     else res.status(Errors.standard.code).json(Errors.standard);
   }
 };
+
 productController.createNewProduct = async (
   req: AdminRequest,
   res: Response,
@@ -69,13 +70,11 @@ productController.getProducts = async (req: Request, res: Response) => {
   try {
     console.log("getProducts");
     const { order, page, limit, productCollection, search } = req.query;
-
     const inquiry: ProductInquiry = {
       order: String(order),
       page: Number(page),
       limit: Number(limit),
     };
-
     if (productCollection)
       inquiry.productCollection = productCollection as ProductCollection;
     if (search) inquiry.search = String(search);
@@ -102,9 +101,9 @@ productController.getProduct = async (req: ExtendedRequest, res: Response) => {
     data = await checkCache(`product:${hashRedisKey(String(id))}`);
     if (data) {
       if (memberId) {
-        // productService.getProduct(memberId, id).then(() => {
-        //   console.log("Updated product data");
-        // });
+        productService.getProduct(memberId, id).then(() => {
+          console.log("Updated product data");
+        });
       }
     } else {
       console.log("FETCHING FROM DB!");
