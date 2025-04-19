@@ -13,7 +13,7 @@ const memberController: T = {};
 const memberService = new MemberService();
 const authService = new AuthService();
 
-memberController.getRestaurant = async (req: Request, res: Response) => {
+memberController.getRestaurant = async (_req: Request, res: Response) => {
   try {
     console.log("getRestaurant");
     let result = await checkCache("restaurant");
@@ -65,7 +65,7 @@ memberController.login = async (req: Request, res: Response) => {
   }
 };
 
-memberController.logout = async (req: Request, res: Response) => {
+memberController.logout = async (_req: Request, res: Response) => {
   try {
     console.log("logout");
     res.cookie("accessToken", null, { maxAge: 0, httpOnly: true });
@@ -106,7 +106,7 @@ memberController.updateMember = async (req: ExtendedRequest, res: Response) => {
   }
 };
 
-memberController.getTopUsers = async (req: Request, res: Response) => {
+memberController.getTopUsers = async (_req: Request, res: Response) => {
   try {
     console.log("getTopUsers");
     const result = await memberService.getTopUsers();
@@ -138,7 +138,7 @@ memberController.verifyAuth = async (
 
 memberController.retrieveAuth = async (
   req: ExtendedRequest,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ) => {
   try {
